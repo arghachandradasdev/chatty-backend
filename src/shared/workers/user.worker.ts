@@ -1,6 +1,6 @@
 import { config } from '@root/config';
 import { userService } from '@services/db/user.service';
-import {DoneCallback, Job} from 'bull';
+import { DoneCallback, Job } from 'bull';
 import Logger from 'bunyan';
 
 const log: Logger = config.createLogger('authWorker');
@@ -8,7 +8,7 @@ const log: Logger = config.createLogger('authWorker');
 class UserWorker {
   async addUserToDB(job: Job, done: DoneCallback): Promise<void> {
     try {
-      const {value} = job.data;
+      const { value } = job.data;
 
       // add method to send data to DB
       await userService.addUserData(value);

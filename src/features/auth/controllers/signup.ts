@@ -52,14 +52,13 @@ export class SignUp {
     userDataForCache.profilePicture = `https://res.cloudinary.com/duezd1urq/image/upload/v${result.version}/${userObjectId}`;
     await userCache.saveUserToCache(`${userObjectId}`, uId, userDataForCache);
 
-
     // add to database
     omit(userDataForCache, ['uId', 'username', 'email', 'avatarColor', 'password']);
-    authQueue.addAuthUserJob('addAuthUserToDB', {value: userDataForCache}); // set the data to JOB
-    userQueue.addUserJob('addUserToDB', {value: userDataForCache}); // set the data to JOB
+    authQueue.addAuthUserJob('addAuthUserToDB', { value: userDataForCache }); // set the data to JOB
+    userQueue.addUserJob('addUserToDB', { value: userDataForCache }); // set the data to JOB
 
     const userJwt: string = SignUp.prototype.signToken(authData, userObjectId);
-    req.session = {jwt: userJwt};
+    req.session = { jwt: userJwt };
 
     res.status(HTTP_STATUS.CREATED).json({ message: 'User created successfully.', user: userDataForCache, token: userJwt });
   }
@@ -78,19 +77,20 @@ export class SignUp {
   }
 
   private signToken(data: IAuthDocument, userObjectId: ObjectId): string {
-    return jwt.sign({
-      userId: userObjectId,
-      uId: data.uId,
-      email: data.email,
-      username: data.username,
-      avatarColor: data.avatarColor
-    },
-    config.JWT_TOKEN!
+    return jwt.sign(
+      {
+        userId: userObjectId,
+        uId: data.uId,
+        email: data.email,
+        username: data.username,
+        avatarColor: data.avatarColor
+      },
+      config.JWT_TOKEN!
     );
   }
 
   private userData(data: IAuthDocument, userObjectId: ObjectId): IUserDocument {
-    const {_id, username, email, uId, password, avatarColor} = data;
+    const { _id, username, email, uId, password, avatarColor } = data;
 
     return {
       _id: userObjectId,

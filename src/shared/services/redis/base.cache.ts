@@ -1,4 +1,4 @@
-import {createClient} from 'redis';
+import { createClient } from 'redis';
 import Logger from 'bunyan';
 import { config } from '@root/config';
 
@@ -9,7 +9,7 @@ export abstract class BaseCache {
   log: Logger;
 
   constructor(cacheName: string) {
-    this.client = createClient({url: config.REDIS_HOST});
+    this.client = createClient({ url: config.REDIS_HOST });
     this.log = config.createLogger(cacheName);
     this.cacheError();
   }
