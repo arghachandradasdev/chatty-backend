@@ -17,7 +17,8 @@ const authSchema: Schema = new Schema(
   },
   {
     toJSON: {
-      transform(_doc, ret) { // if request come from client, we are not sending(deleting) password.
+      transform(_doc, ret) {
+        // if request come from client, we are not sending(deleting) password.
         delete ret.password;
         return ret;
       }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { JoiRequestValidationError } from '@globals/helpers/error-handler';
-import {Request} from 'express';
-import {ObjectSchema} from 'joi';
+import { Request } from 'express';
+import { ObjectSchema } from 'joi';
 
 // creating type of method
 type IJoiDecorator = (target: any, key: string, descriptor: PropertyDescriptor) => void;
@@ -16,7 +16,7 @@ export const joiValidation = (schema: ObjectSchema): IJoiDecorator => {
       const req: Request = args[0];
 
       const { error } = await Promise.resolve(schema.validate(req.body));
-      if(error?.details) {
+      if (error?.details) {
         throw new JoiRequestValidationError(error.details[0].message);
       }
 
