@@ -1,4 +1,5 @@
 import { ServerError } from '@globals/helpers/error-handler';
+import { Helpers } from '@globals/helpers/helpers';
 import { config } from '@root/config';
 import { BaseCache } from '@services/redis/base.cache';
 import { IUserDocument } from '@user/interfaces/user.interface';
@@ -100,6 +101,30 @@ export class UserCache extends BaseCache {
       await this.client.HSET(`users:${key}`, dataToSave);
 
       // NOTE: we cannot fetch multiple users/keys from HSET , so we have to also use Sorted Set.
+    } catch (error) {
+      log.error(error);
+      throw new ServerError('Server error. Try again');
+    }
+  }
+
+  public async getUserFromCache(userId: string): Promise<IUserDocument | null> {
+    try {
+      if (!this.client.isOpen) {
+        // if there is no connection
+        await this.client.connect();
+      }
+
+      const response: IUserDocument = await this.client.HGETALL(`users:${userId}`) as unknown as IUserDocument;
+      response.createdAt = new Date(Helpers.parseJson(`${response.createdAt}`));
+      response.postsCount = Helpers.parseJson(`${response.postsCount}`);
+      response.blocked = Helpers.parseJson(`${response.blocked}`);
+      response.blockedBy = Helpers.parseJson(`${response.blockedBy}`);
+      response.notifications = Helpers.parseJson(`${response.notifications}`);
+      response.social = Helpers.parseJson(`${response.social}`);
+      response.followersCount = Helpers.parseJson(`${response.followersCount}`);
+      response.followingCount = Helpers.parseJson(`${response.followingCount}`);
+
+      return response;
     } catch (error) {
       log.error(error);
       throw new ServerError('Server error. Try again');
